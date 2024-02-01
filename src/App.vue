@@ -68,7 +68,7 @@ const addProduct = async () => {
 // Toggle purchase status of a product
 const togglePurchase = async (id) => {
   try {
-    await fetch(`${BACKEND_URL}/products/${id}/toggle-purchase`, {
+    await fetch(`${BACKEND_URL}/products?id=${id}`, {
       method: 'PATCH',
     });
     await fetchProducts(); // Refresh the list after toggling
@@ -80,14 +80,19 @@ const togglePurchase = async (id) => {
 // Delete a product
 const deleteProduct = async (id) => {
   try {
-    await fetch(`${BACKEND_URL}/products/${id}`, {
+    const response = await fetch(`${BACKEND_URL}/products?id=${id}`, {
       method: 'DELETE',
     });
-    await fetchProducts(); // Refresh the list after deleting
+    if (response.ok) {
+      await fetchProducts(); // Refresh the list after deleting
+    } else {
+      console.error('Failed to delete product:', await response.text());
+    }
   } catch (error) {
     console.error('Failed to delete product:', error);
   }
 };
+
 
 // Fetch products on component mount
 onMounted(fetchProducts);
